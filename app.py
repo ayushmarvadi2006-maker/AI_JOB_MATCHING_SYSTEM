@@ -15,6 +15,7 @@ def clean_text(text):
 
 
 def calculate_skill_match(candidate_skills, required_skills):
+
     candidate_set = {
         skill.strip().lower()
         for skill in candidate_skills
@@ -68,17 +69,21 @@ def predict():
     required_text = " ".join(required_skills)
 
     combined_text = candidate_text + " " + required_text
-
     cleaned_text = clean_text(combined_text)
-
-    # ML prediction using text only
-    prediction = model.predict([cleaned_text])[0]
 
     # Transparent skill matching
     match_percentage, matched_skills, missing_skills = calculate_skill_match(
         candidate_skills,
         required_skills
     )
+
+    # Suitability based on match percentage
+    if match_percentage < 40:
+        prediction = "Low"
+    elif match_percentage < 70:
+        prediction = "Medium"
+    else:
+        prediction = "High"
 
     return jsonify({
         "suitability": prediction,
